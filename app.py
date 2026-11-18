@@ -25,7 +25,13 @@ def process_paths(paths):
 if "messages" not in st.session_state: st.session_state.messages=[]
 if "vectorstore" not in st.session_state:
     default=list(DATA_DIR.glob("*.pdf"))
-    st.session_state.vectorstore, st.session_state.pages, st.session_state.chunks = process_paths(default) if default else (None,0,0)
+    try:
+        st.session_state.vectorstore, st.session_state.pages, st.session_state.chunks = process_paths(default) if default else (None,0,0)
+    except Exception as e:
+        st.session_state.vectorstore = None
+        st.session_state.pages = 0
+        st.session_state.chunks = 0
+        st.warning(f"Warning: Failed to initialize vectorstore due to dependency error ({type(e).__name__}). Please check your environment setup and dependencies.")
 
 with st.sidebar:
     st.markdown("## 🎓 CampusGPT")
